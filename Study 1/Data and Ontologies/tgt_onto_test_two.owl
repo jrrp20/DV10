@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF
+xmlns:tgt="http://example.org/tgt#"
+xmlns:owl="http://www.w3.org/2002/07/owl#"
+xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+>
+
+<!-- Define Ontology -->
+  <owl:Ontology rdf:about="http://example.org/tgt"/>
+
+<!-- Define Classes -->
+<owl:Class rdf:about="tgt:Employee">
+    <rdfs:label>Employee</rdfs:label>
+    <skos:altLabel>Person</skos:altLabel>
+</owl:Class>
+
+<owl:Class rdf:about="tgt:Company">
+    <rdfs:label>Company</rdfs:label>
+    <skos:altLabel>Organization</skos:altLabel>
+</owl:Class>
+
+<owl:Class rdf:about="tgt:Nation">
+    <rdfs:label>Nation</rdfs:label>
+    <skos:altLabel>Country</skos:altLabel>
+</owl:Class>
+
+<!-- Target Ontology Object Properties -->
+<owl:ObjectProperty rdf:about="tgt:worksFor">
+    <rdfs:label>Works for</rdfs:label>
+    <skos:altLabel>Workplace</skos:altLabel>
+    <rdfs:comment>The company that an employee currently works for.</rdfs:comment>
+    <rdfs:domain rdf:resource="tgt:Employee"/>
+    <rdfs:range rdf:resource="tgt:Company"/>
+</owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="tgt:locatedIn">
+    <rdfs:label>Located in</rdfs:label>
+    <skos:altLabel>Location of organization</skos:altLabel>
+    <rdfs:comment>The nation where the company is located.</rdfs:comment>
+    <rdfs:domain rdf:resource="tgt:Company"/>
+    <rdfs:range rdf:resource="tgt:Nation"/>
+</owl:ObjectProperty>
+
+<!-- Target Ontology Data Properties -->
+<owl:DatatypeProperty rdf:about="tgt:fullName">
+    <rdfs:label>Name</rdfs:label>
+    <skos:altLabel>Full name</skos:altLabel>
+    <skos:altLabel>Employee name</skos:altLabel>
+    <rdfs:comment>The full name of an employee.</rdfs:comment>
+    <rdfs:domain rdf:resource="tgt:Employee"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+</owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="tgt:officeAddress">
+    <rdfs:label>Office address</rdfs:label>
+    <skos:altLabel>Address</skos:altLabel>
+    <rdfs:comment>The office address of a company.</rdfs:comment>
+    <rdfs:domain rdf:resource="tgt:Company"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+</owl:DatatypeProperty>
+
+</rdf:RDF>
