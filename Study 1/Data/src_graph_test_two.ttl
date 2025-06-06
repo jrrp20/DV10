@@ -1,0 +1,26 @@
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix src: <http://example.org/src#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://example.org/src> a owl:Ontology .
+
+src:Person1 a src:Person ;
+    src:name "Alice"^^xsd:string ;
+    src:worksAt src:Organization1 .
+
+src:Person2 a src:Person ;
+    src:name "Bob"^^xsd:string ;
+    src:worksAt src:Organization2 .
+
+src:Country1 a src:Country .
+
+src:Country2 a src:Country .
+
+src:Organization1 a src:Organization ;
+    src:address "1 A Street"^^xsd:string ;
+    src:locatedIn src:Country1 .
+
+src:Organization2 a src:Organization ;
+    src:address "2 B Street"^^xsd:string ;
+    src:locatedIn src:Country2 .

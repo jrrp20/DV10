@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF
+xmlns:src="http://example.org/src#"
+xmlns:owl="http://www.w3.org/2002/07/owl#"
+xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+>
+
+<!-- Define Ontology -->
+<owl:Ontology rdf:about="http://example.org/src"/>
+
+<!-- Define Classes -->
+<owl:Class rdf:about="src:Person">
+    <rdfs:label>Person</rdfs:label>
+    <skos:altLabel>Employee</skos:altLabel>
+</owl:Class>
+<owl:Class rdf:about="src:Organization">
+    <rdfs:label>Organization</rdfs:label>
+    <skos:altLabel>Company</skos:altLabel>
+</owl:Class>
+<owl:Class rdf:about="src:Country">
+    <rdfs:label>Country</rdfs:label>
+    <skos:altLabel>Nation</skos:altLabel>
+</owl:Class>
+
+<!-- Source Ontology Object Properties -->
+<owl:ObjectProperty rdf:about="src:worksAt">
+    <rdfs:label>works at</rdfs:label>
+    <rdfs:comment>The organization that a person works at.</rdfs:comment>
+    <rdfs:domain rdf:resource="src:Person"/>
+    <rdfs:range rdf:resource="src:Organization"/>
+</owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="src:locatedIn">
+    <rdfs:label>located in</rdfs:label>
+    <rdfs:comment>The country where the organization is located.</rdfs:comment>
+    <rdfs:domain rdf:resource="src:Organization"/>
+    <rdfs:range rdf:resource="src:Country"/>
+</owl:ObjectProperty>
+
+<!-- Source Ontology Data Properties -->
+<owl:DatatypeProperty rdf:about="src:name">
+    <rdfs:label>name</rdfs:label>
+    <rdfs:comment>The name of a person.</rdfs:comment>
+    <rdfs:domain rdf:resource="src:Person"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+</owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="src:address">
+    <rdfs:label>address</rdfs:label>
+    <rdfs:comment>The address of an organization.</rdfs:comment>
+    <rdfs:domain rdf:resource="src:Organization"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+</owl:DatatypeProperty>
+
+</rdf:RDF>
