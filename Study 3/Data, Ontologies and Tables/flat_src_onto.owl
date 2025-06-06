@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:owl="http://www.w3.org/2002/07/owl#"
+         xml:base="http://example.org/src"
+         xmlns="http://example.org/src#">
+
+  <!-- Define Ontology -->
+  <owl:Ontology rdf:about="http://example.org/src"/>
+
+  <owl:Class rdf:about="#Measurement">
+    <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    <rdfs:label xml:lang="en">Measurement</rdfs:label>
+    <rdfs:comment xml:lang="en">
+      This is a measurement class which consists of structured values (numerical or categorical) 
+      obtained through systematic and standardized examination or testing of a Person or Person’s sample.
+    </rdfs:comment>
+</owl:Class>
+
+  <!-- Define Relations -->
+  <owl:DatatypeProperty rdf:about="#referenceinterval_upperlimit">
+    <rdfs:label>Upper limit</rdfs:label>
+    <rdfs:comment>The upper limit of the referenceinterval.</rdfs:comment>
+    <rdfs:domain rdf:resource="#Measurement"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+  </owl:DatatypeProperty>
+  
+  <owl:DatatypeProperty rdf:about="#resulttype">
+    <rdfs:label>resulttype</rdfs:label>
+    <rdfs:comment>This is the type of result given in value, either numerical (float, integer) or categorical (string).</rdfs:comment>
+    <rdfs:domain rdf:resource="#Measurement"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="#rekvirent_idtype">
+    <rdfs:label>Rekvirent ID type</rdfs:label>
+    <rdfs:domain rdf:resource="#Measurement"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:comment>This is the type of requisitioner.</rdfs:comment>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="#operator">
+    <rdfs:label>Operator</rdfs:label>
+    <rdfs:comment>This is a quantifier showing whether the result is greater than or smaller than the value provided in Value.</rdfs:comment>
+    <rdfs:domain rdf:resource="#Measurement"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="#samplingdate">
+    <rdfs:label>Date</rdfs:label>
+    <rdfs:comment>This is the date at which the sample that forms the basis for the measurement was taken.</rdfs:comment>
+    <rdfs:domain rdf:resource="#Measurement"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#date"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="#samplingtime">
+    <rdfs:label>Time</rdfs:label>
+    <rdfs:comment>This is the time at which the sample that forms the basis for the measurement was taken.</rdfs:comment>
+    <rdfs:domain rdf:resource="#Measurement"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#time"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="#analysiscode">
+    <rdfs:label>Analysiscode</rdfs:label>
+    <rdfs:comment>This is a unique code in the NPU system that refers to the quantity that was measured.</rdfs:comment>
+    <rdfs:domain rdf:resource="#Measurement"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="#laboratorium_idcode">
+    <rdfs:label>Laboratory code</rdfs:label>
+    <rdfs:domain rdf:resource="#Measurement"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:comment>This is a code referencing the lab that produced the result.</rdfs:comment>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="#patient_cpr">
+    <rdfs:label>The cpr number of the patient</rdfs:label>
+    <rdfs:comment>This is a unique identifier of the patient.</rdfs:comment>
+    <rdfs:domain rdf:resource="#Measurement"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="#unit">
+    <rdfs:label>unit</rdfs:label>
+    <rdfs:comment>If the value is numerical, this is the unit in which the measurement is recorded.</rdfs:comment>
+    <rdfs:domain rdf:resource="#Measurement"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="#rekvirent_id">
+    <rdfs:label>Requisitioner</rdfs:label>
+    <rdfs:comment>This is the recipient of the measurement.</rdfs:comment>
+    <rdfs:domain rdf:resource="#Measurement"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="#resultvalidation">
+    <rdfs:label>Evaluation of result.</rdfs:label>
+    <rdfs:comment>This indicates whether the result of the measurement is within the interval specified for the type of measurement in question.</rdfs:comment>
+    <rdfs:domain rdf:resource="#Measurement"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="#referenceinterval_lowerlimit">
+    <rdfs:label>Lower limit</rdfs:label>
+    <rdfs:comment>The lower limit of the referenceinterval.</rdfs:comment>
+    <rdfs:domain rdf:resource="#Measurement"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="#value">
+    <rdfs:label>Value of the measurement</rdfs:label>
+    <rdfs:comment>The value of the measurement.</rdfs:comment>
+    <rdfs:domain rdf:resource="#Measurement"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+</owl:DatatypeProperty>
+
+</rdf:RDF>
