@@ -1,0 +1,175 @@
+src:worksAt vs tgt:worksFor → YES (confidence: 0.98)
+src:worksAt vs tgt:Employee → NO (confidence: 0.11)
+src:worksAt vs tgt:fullName → NO (confidence: 0.00)
+MATCH: src:worksAt ↔ tgt:worksFor (confidence: 0.98)
+src:Country vs tgt:Nation → YES (confidence: 0.97)
+src:Country vs tgt:locatedIn → NO (confidence: 0.11)
+src:Country vs tgt:Company → NO (confidence: 0.00)
+MATCH: src:Country ↔ tgt:Nation (confidence: 0.97)
+src:name vs tgt:fullName → YES (confidence: 0.63)
+src:name vs tgt:Employee → NO (confidence: 0.00)
+src:name vs tgt:officeAddress → NO (confidence: 0.00)
+MATCH: src:name ↔ tgt:fullName (confidence: 0.63)
+src:Organization vs tgt:Company → YES (confidence: 0.97)
+src:Organization vs tgt:Employee → NO (confidence: 0.01)
+src:Organization vs tgt:Nation → NO (confidence: 0.04)
+MATCH: src:Organization ↔ tgt:Company (confidence: 0.97)
+src:locatedIn vs tgt:locatedIn → YES (confidence: 0.93)
+src:locatedIn vs tgt:Nation → YES (confidence: 0.58)
+src:locatedIn vs tgt:worksFor → NO (confidence: 0.06)
+MATCH: src:locatedIn ↔ tgt:locatedIn (confidence: 0.93)
+src:Person vs tgt:Employee → NO (confidence: 0.21)
+src:Person vs tgt:fullName → NO (confidence: 0.08)
+src:Person vs tgt:Company → NO (confidence: 0.00)
+No confident match found for src:Person
+src:address vs tgt:officeAddress → YES (confidence: 0.99)
+src:address vs tgt:worksFor → NO (confidence: 0.03)
+src:address vs tgt:locatedIn → NO (confidence: 0.11)
+MATCH: src:address ↔ tgt:officeAddress (confidence: 0.99)
+It took 914.2553489208221 to find the final matches.
+{'src:worksAt': {'match': 'tgt:worksFor', 'confidence': 0.9807718580155679}, 'src:Country': {'match': 'tgt:Nation', 'confidence': 0.9694394045081915}, 'src:name': {'match': 'tgt:fullName', 'confidence': 0.6279244942935636}, 'src:Organization': {'match': 'tgt:Company', 'confidence': 0.9702829451489686}, 'src:locatedIn': {'match': 'tgt:locatedIn', 'confidence': 0.9311082379313518}, 'src:address': {'match': 'tgt:officeAddress', 'confidence': 0.9879101423971036}}
+
+LLM response time: 7838.37 seconds
+
+You are an expert Python developer and RDF transformation specialist.
+Your task is to generate **Fact Generating Functions (FGFs)** – Python functions using RDFLib that transform RDF triples from a **source RDF graph** (`src_graph`) into a **target RDF graph** (`tgt_graph`) based on **explicit ontology mappings**.
+
+---
+
+### 🔁 Definition and Requirements
+
+Each FGF:
+- Focuses on **one mapped source class** (e.g., `src:Person`).
+- Iterates over all instances of that class in `src_graph`.
+- Creates a corresponding instance of the mapped target class in `tgt_graph`.
+- Transfers data via **explicitly mapped properties only** (ignore others).
+- Uses RDFLib constructs (`Namespace`, `URIRef`, `Literal`, `RDF`, etc.).
+- Ensures **domain and range correctness** based on the ontologies.
+- Should be clear, modular, and compatible with a transformation pipeline.
+
+---
+
+### 📑 Input Data
+
+#### Ontology Mappings
+```python
+mappings = {
+    "src:worksAt": "tgt:worksFor",
+    "src:Country": "tgt:Nation",
+    "src:name": "tgt:fullName",
+    "src:Organization": "tgt:Company",
+    "src:locatedIn": "tgt:locatedIn",
+    "src:address": "tgt:officeAddress"
+}
+```
+#### Ontology Domain and Range (for validation)
+
+**Source Ontology** (`src:`):
+- src:address: domain=`src:Organization`, range=`string`
+- src:locatedIn: domain=`src:Organization`, range=`src:Country`
+- src:name: domain=`src:Person`, range=`string`
+- src:worksAt: domain=`src:Person`, range=`src:Organization`
+
+**Target Ontology** (`tgt:`):
+- tgt:fullName: domain=`tgt:Employee`, range=`string`
+- tgt:locatedIn: domain=`tgt:Company`, range=`tgt:Nation`
+- tgt:officeAddress: domain=`tgt:Company`, range=`string`
+- tgt:worksFor: domain=`tgt:Employee`, range=`tgt:Company`
+
+---
+
+### ✅ Instructions
+
+For each mapped source class in the `mappings` dictionary:
+1. Write a single Python function that:
+   - Finds all instances of the source class in `src_graph`.
+   - Constructs a new instance of the mapped target class in `tgt_graph`.
+   - Transfers mapped properties using the mappings.
+2. Use RDFLib's `URIRef`, `Literal`, and `RDF.type` as appropriate.
+3. Construct URIs using `SRC` and `TGT` namespaces.
+4. Do not include unmapped properties or relationships.
+5. Ensure all triples conform to the target ontology's domain and range constraints.
+6. Your code should be modular, clear, and ready to use in a transformation pipeline.
+
+---
+
+### ✏️ Example Output Format
+```python
+from rdflib import Graph, URIRef, Literal, Namespace
+from rdflib.namespace import RDF, XSD
+
+SRC = Namespace("http://example.org/src#")
+TGT = Namespace("http://example.org/tgt#")
+
+def fgf_organization(src_graph, tgt_graph):
+    for org in src_graph.subjects(RDF.type, SRC.Organization):
+        org_name = str(org).split('#')[-1]  # Extract local name for the org
+        tgt_org = TGT[org_name]
+
+        # Declare the organization as tgt:Company
+        tgt_graph.add((tgt_org, RDF.type, TGT.Company))
+
+        # Handle data property 'address'
+        for addr in src_graph.objects(org, SRC.address):
+            tgt_graph.add((tgt_org, TGT.officeAddress, addr))
+
+        # Handle object property 'locatedIn'
+        for country in src_graph.objects(org, SRC.locatedIn):
+            country_name = str(country).split('#')[-1]  # Extract local name for country
+            tgt_country = TGT[country_name]  # create URIRef in target namespace
+
+            # Add 'locatedIn' relation
+            tgt_graph.add((tgt_org, TGT.locatedIn, tgt_country))
+
+            # Explicitly add type declaration for the country as tgt:Nation
+            tgt_graph.add((tgt_country, RDF.type, TGT.Nation))
+```
+
+---
+
+### ⚠️ Output Constraint
+
+Only output the Python function(s) corresponding to the mapped classes.
+Do **not** include explanations, repeated mappings, examples, or comments.
+Output code only.
+
+---
+
+### 📝 Output
+
+```python
+from rdflib import Graph, URIRef, Literal, Namespace
+from rdflib.namespace import RDF, XSD
+
+SRC = Namespace("http://example.org/src#")
+TGT = Namespace("http://example.org/tgt#")
+
+def fgf_person(src_graph, tgt_graph):
+    for person in src_graph.subjects(RDF.type, SRC.Person):
+        person_name = str(person).split('#')[-1]  # Extract local name for the person
+        tgt_person = TGT[person_name]
+
+        # Declare the person as tgt:Employee
+        tgt_graph.add((tgt_person, RDF.type, TGT.Employee))
+
+        # Handle data property 'name'
+        for name in src_graph.objects(person, SRC.name):
+            tgt_graph.add((tgt_person, TGT.fullName, name))
+
+        # Handle object property 'worksAt'
+        for org in src_graph.objects(person, SRC.worksAt):
+            org_name = str(org).split('#')[-1]  # Extract local name for the org
+            tgt_org = TGT[org_name]
+
+            # Add 'worksFor' relation
+            tgt_graph.add((tgt_person, TGT.worksFor, tgt_org))
+
+def fgf_country(src_graph, tgt_graph):
+    for country in src_graph.subjects(RDF.type, SRC.Country):
+        country_name = str(country).split('#')[-1]  # Extract local name for country
+        tgt_country = TGT[country_name]  # create URIRef in target namespace
+
+        # Declare the country as tgt:Nation
+        tgt_graph.add((tgt_country, RDF.type, TGT.Nation))
+```
+📫 Sent notification to jrrp20@student.aau.dk

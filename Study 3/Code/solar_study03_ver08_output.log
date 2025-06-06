@@ -1,0 +1,86 @@
+✅ Prompt uses 3006 tokens. 5136 tokens available for generation.
+
+LLM response time (Matchings Generation): 2394.81 seconds
+
+
+src:samplingtime ≈ tgt:measurement_datetime
+src:patient_cpr ≈ tgt:person_id
+src:analysiscode ≈ tgt:measurement_source_concept_id
+src:laboratorium_idcode ≈ ∅
+src:referenceinterval_lowerlimit ≈ tgt:range_low
+src:referenceinterval_upperlimit ≈ tgt:range_high
+src:unit ≈ tgt:unit_source_value
+src:rekvirent_idtype ≈ ∅
+src:samplingdate ≈ tgt:measurement_date
+src:resulttype ≈ ∅
+src:value ≈ tgt:value_as_number
+src:operator ≈ tgt:operator_concept_id
+src:rekvirent_id ≈ tgt:provider_id
+src:resultvalidation ≈ ∅
+src:Measurement ≈ tgt:Measurement
+✅ Prompt uses 3399 tokens. 4743 tokens available for generation.
+
+LLM response time (Mappings Generation): 2416.19 seconds
+
+
+---
+
+Here are the complete set of logical alignments between the source and target ontologies:
+
+1. ∀x (src:samplingtime(x) → tgt:measurement_datetime(x, parse_date_time(src:samplingtime(x))))
+2. ∀x (src:patient_cpr(x) → tgt:person_id(x, lookup_person_id(src:patient_cpr(x))))
+3. ∀x (src:analysiscode(x) → tgt:measurement_source_concept_id(x, lookup_concept_id(src:analysiscode(x))))
+4. ∀x (src:referenceinterval_lowerlimit(x) → tgt:range_low(x, src:referenceinterval_lowerlimit(x)))
+5. ∀x (src:referenceinterval_upperlimit(x) → tgt:range_high(x, src:referenceinterval_upperlimit(x)))
+6. ∀x (src:unit(x) → tgt:unit_source_value(x, src:unit(x)))
+7. ∀x (src:value(x) → tgt:value_as_number(x, src:value(x)))
+8. ∀x (src:operator(x) → tgt:operator_concept_id(x, lookup_operator_concept(src:operator(x))))
+9. ∀x (src:rekvirent_id(x) → tgt:provider_id(x, lookup_provider_id(src:rekvirent_id(x))))
+10. ∀x (src:Measurement(x) → tgt:Measurement(x))
+
+Note that some properties in the source ontology do not have a direct mapping to the target ontology. These properties are not included in the logical alignments.
+✅ Prompt uses 1974 tokens. 6168 tokens available for generation.
+
+LLM response time (FGF Generation): 2182.29 seconds
+
+
+---
+
+```python
+def src_Measurement_to_tgt_Measurement(src_graph, tgt_graph):
+    for src_measurement in src_graph.subjects(predicate=RDF.type, object=SRC.Measurement):
+        tgt_measurement = tgt_graph.BNode()
+        tgt_graph.add((tgt_measurement, RDF.type, TGT.Measurement))
+
+        # Transfer properties
+        if src_graph.value(subject=src_measurement, predicate=SRC.samplingtime):
+            tgt_graph.add((tgt_measurement, TGT.measurement_datetime, parse_date_time(src_graph.value(subject=src_measurement, predicate=SRC.samplingtime))))
+
+        if src_graph.value(subject=src_measurement, predicate=SRC.patient_cpr):
+            tgt_graph.add((tgt_measurement, TGT.person_id, lookup_person_id(src_graph.value(subject=src_measurement, predicate=SRC.patient_cpr))))
+
+        if src_graph.value(subject=src_measurement, predicate=SRC.analysiscode):
+            tgt_graph.add((tgt_measurement, TGT.measurement_source_concept_id, lookup_concept_id(src_graph.value(subject=src_measurement, predicate=SRC.analysiscode))))
+
+        if src_graph.value(subject=src_measurement, predicate=SRC.referenceinterval_lowerlimit):
+            tgt_graph.add((tgt_measurement, TGT.range_low, src_graph.value(subject=src_measurement, predicate=SRC.referenceinterval_lowerlimit)))
+
+        if src_graph.value(subject=src_measurement, predicate=SRC.referenceinterval_upperlimit):
+            tgt_graph.add((tgt_measurement, TGT.range_high, src_graph.value(subject=src_measurement, predicate=SRC.referenceinterval_upperlimit)))
+
+        if src_graph.value(subject=src_measurement, predicate=SRC.unit):
+            tgt_graph.add((tgt_measurement, TGT.unit_source_value, src_graph.value(subject=src_measurement, predicate=SRC.unit)))
+
+        if src_graph.value(subject=src_measurement, predicate=SRC.value):
+            tgt_graph.add((tgt_measurement, TGT.value_as_number, src_graph.value(subject=src_measurement, predicate=SRC.value)))
+
+        if src_graph.value(subject=src_measurement, predicate=SRC.operator):
+            tgt_graph.add((tgt_measurement, TGT.operator_concept_id, lookup_operator_concept(src_graph.value(subject=src_measurement, predicate=SRC.operator))))
+
+        if src_graph.value(subject=src_measurement, predicate=SRC.rekvirent_id):
+            tgt_graph.add((tgt_measurement, TGT.provider_id, lookup_provider_id(src_graph.value(subject=src_measurement, predicate=SRC.rekvirent_id))))
+
+        # Add the source class to the target graph
+        tgt_graph.add((tgt_measurement, RDF.type, SRC.Measurement))
+```
+📫 Sent notification to jrrp20@student.aau.dk

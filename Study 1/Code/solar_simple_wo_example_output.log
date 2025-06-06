@@ -1,0 +1,148 @@
+src:locatedIn vs tgt:locatedIn → YES (confidence: 0.93)
+src:locatedIn vs tgt:Nation → YES (confidence: 0.58)
+src:locatedIn vs tgt:worksFor → NO (confidence: 0.06)
+MATCH: src:locatedIn ↔ tgt:locatedIn (confidence: 0.93)
+src:worksAt vs tgt:worksFor → YES (confidence: 0.98)
+src:worksAt vs tgt:Employee → NO (confidence: 0.11)
+src:worksAt vs tgt:fullName → NO (confidence: 0.00)
+MATCH: src:worksAt ↔ tgt:worksFor (confidence: 0.98)
+src:name vs tgt:fullName → YES (confidence: 0.63)
+src:name vs tgt:Employee → NO (confidence: 0.00)
+src:name vs tgt:officeAddress → NO (confidence: 0.00)
+MATCH: src:name ↔ tgt:fullName (confidence: 0.63)
+src:Person vs tgt:Employee → NO (confidence: 0.21)
+src:Person vs tgt:fullName → NO (confidence: 0.08)
+src:Person vs tgt:Company → NO (confidence: 0.00)
+No confident match found for src:Person
+src:Organization vs tgt:Company → YES (confidence: 0.97)
+src:Organization vs tgt:Employee → NO (confidence: 0.01)
+src:Organization vs tgt:Nation → NO (confidence: 0.04)
+MATCH: src:Organization ↔ tgt:Company (confidence: 0.97)
+src:Country vs tgt:Nation → YES (confidence: 0.97)
+src:Country vs tgt:locatedIn → NO (confidence: 0.11)
+src:Country vs tgt:Company → NO (confidence: 0.00)
+MATCH: src:Country ↔ tgt:Nation (confidence: 0.97)
+src:address vs tgt:officeAddress → YES (confidence: 0.99)
+src:address vs tgt:worksFor → NO (confidence: 0.03)
+src:address vs tgt:locatedIn → NO (confidence: 0.11)
+MATCH: src:address ↔ tgt:officeAddress (confidence: 0.99)
+It took 1551.3074309825897 to find the final matches.
+{'src:locatedIn': {'match': 'tgt:locatedIn', 'confidence': 0.9311082379313518}, 'src:worksAt': {'match': 'tgt:worksFor', 'confidence': 0.9807718580155679}, 'src:name': {'match': 'tgt:fullName', 'confidence': 0.6279244942935636}, 'src:Organization': {'match': 'tgt:Company', 'confidence': 0.9702829451489686}, 'src:Country': {'match': 'tgt:Nation', 'confidence': 0.9694394045081915}, 'src:address': {'match': 'tgt:officeAddress', 'confidence': 0.9879101423971036}}
+
+LLM response time: 12488.53 seconds
+
+You are an expert Python developer specializing in RDF transformations.
+
+Your task is to generate **Fact Generating Functions (FGFs)** — Python functions that use RDFLib to transform RDF triples from a source graph (`src_graph`) into a target graph (`tgt_graph`) based on an ontology alignment.
+
+---
+
+### 🔁 Definition of FGFs
+
+Each FGF:
+- Handles a specific **source class** (e.g., `src:Person`).
+- Iterates over all instances of that class in `src_graph`.
+- Creates a corresponding instance in `tgt_graph` using the mapped target class.
+- Copies property values using explicitly defined mappings.
+- Skips any information that is not mapped.
+- Uses the `SRC` and `TGT` namespaces to build URIs.
+- Ensures that domain and range constraints of the **target ontology** are respected.
+- Follows RDFLib syntax and best practices.
+
+---
+
+### 📑 Ontology Mappings
+
+```python
+mappings = {
+    "src:locatedIn": "tgt:locatedIn",
+    "src:worksAt": "tgt:worksFor",
+    "src:name": "tgt:fullName",
+    "src:Organization": "tgt:Company",
+    "src:Country": "tgt:Nation",
+    "src:address": "tgt:officeAddress"
+}
+```
+#### Ontology Domain and Range (for validation)
+
+**Source Ontology** (`src:`):
+- src:address: domain=`src:Organization`, range=`string`
+- src:locatedIn: domain=`src:Organization`, range=`src:Country`
+- src:name: domain=`src:Person`, range=`string`
+- src:worksAt: domain=`src:Person`, range=`src:Organization`
+
+## Target ontology (`tgt:`):
+- tgt:fullName: domain=`tgt:Employee`, range=`string`
+- tgt:locatedIn: domain=`tgt:Company`, range=`tgt:Nation`
+- tgt:officeAddress: domain=`tgt:Company`, range=`string`
+- tgt:worksFor: domain=`tgt:Employee`, range=`tgt:Company`
+
+### ✅ Instructions
+
+For each mapped source class in the `mappings` dictionary:
+1. Write a single Python function that:
+   - Finds all instances of the source class in `src_graph`.
+   - Constructs a new instance of the mapped target class in `tgt_graph`.
+   - Transfers mapped properties using the mappings.
+2. Use RDFLib's `URIRef`, `Literal`, and `RDF.type` as appropriate.
+3. Construct URIs using `SRC` and `TGT` namespaces.
+4. Do not include unmapped properties or relationships.
+5. Ensure all triples conform to the target ontology's domain and range constraints.
+6. Your code should be modular, clear, and ready to use in a transformation pipeline.
+
+---
+
+### ⚠️ Output Constraint
+
+Only output the Python function(s) corresponding to the mapped classes.
+Do **not** include explanations, repeated mappings, examples, or comments.
+Output code only.
+
+---
+
+```python
+def generate_tgt_employee(src_graph, tgt_graph):
+    for person in src_graph.subjects(predicate=RDF.type, object=SRC.Person):
+        tgt_graph.add((
+            TGT.Employee(person),
+            RDF.type,
+            TGT.Employee
+        ))
+        tgt_graph.add((
+            TGT.Employee(person),
+            TGT.fullName,
+            src_graph.value(subject=person, predicate=SRC.name)
+        ))
+        tgt_graph.add((
+            TGT.Employee(person),
+            TGT.worksFor,
+            src_graph.value(subject=person, predicate=SRC.worksAt)
+        ))
+
+def generate_tgt_company(src_graph, tgt_graph):
+    for organization in src_graph.subjects(predicate=RDF.type, object=SRC.Organization):
+        tgt_graph.add((
+            TGT.Company(organization),
+            RDF.type,
+            TGT.Company
+        ))
+        tgt_graph.add((
+            TGT.Company(organization),
+            TGT.officeAddress,
+            src_graph.value(subject=organization, predicate=SRC.address)
+        ))
+        tgt_graph.add((
+            TGT.Company(organization),
+            TGT.locatedIn,
+            src_graph.value(subject=organization, predicate=SRC.locatedIn)
+        ))
+
+def generate_tgt_nation(src_graph, tgt_graph):
+    for country in src_graph.subjects(predicate=RDF.type, object=SRC.Country):
+        tgt_graph.add((
+            TGT.Nation(country),
+            RDF.type,
+            TGT.Nation
+        ))
+```
+📫 Sent notification to jrrp20@student.aau.dk
